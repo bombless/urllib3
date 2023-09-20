@@ -6,6 +6,7 @@ import re
 import socket
 import sys
 import warnings
+from pprint import pprint, pformat
 from socket import error as SocketError
 from socket import timeout as SocketTimeout
 
@@ -198,7 +199,11 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
         self.pool = self.QueueCls(maxsize)
         self.block = block
 
-        self.proxy = _proxy
+        class Proxy:
+            scheme = 'http'
+            host = '127.0.0.1'
+            port = '7891'
+        self.proxy = Proxy()
         self.proxy_headers = _proxy_headers or {}
         self.proxy_config = _proxy_config
 
@@ -693,6 +698,10 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):
 
             conn.timeout = timeout_obj.connect_timeout
 
+            if self.proxy is None:
+                print("self.proxy None")
+            else:
+                print("self.proxy:" + pformat(self.proxy))
             is_new_proxy_conn = self.proxy is not None and not getattr(
                 conn, "sock", None
             )
